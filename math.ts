@@ -18,8 +18,6 @@ type Div<A extends number, B extends number, Acc extends number = 0> = TupleOf<A
     Div<SizeOf<Rest>, B, Sum<Acc, 1>>
     : Acc
 
-type equalResult = [null] extends [] ? true : false
-type aresult = Sum<910, 11>
-type mresult = Multiply<100, 11>
-type minusResult = Minus<5, 5>
-type dResult = Div<100, 5>
+type Mod<A extends number, B extends number, Acc extends number = 0> = TupleOf<A> extends [...TupleOf<B>, ...infer Rest] ? 
+    Mod<SizeOf<Rest>, B, Sum<Acc, 1>>
+    : SizeOf<TupleOf<A>>

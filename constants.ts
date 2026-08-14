@@ -15,26 +15,22 @@ type Tetrominoes = {
     `⬜⬛⬛
      ⬛⬛⬜`
     Z: Tetrominoes["S"]
-    O: `
-    ⬛⬛
-    ⬛⬛
-    `
-    L: `
-    ⬛⬛⬛
-    ⬛⬜⬜
-    `
+    O: `⬛⬛
+        ⬛⬛`
+    L: `⬛⬛⬛
+        ⬛⬜⬜`
     J: Tetrominoes["L"]
 }
 
-type TetrominoToCoordinates<Tetromino extends string, Acc extends Coordinate = { x: 0; y: 0 }> = 
+type TetrominoToCoordinates<Tetromino extends string, Acc extends Coordinate = { x: 0; y: 0, value: Colors["RED"] }> = 
     Tetromino extends `${infer Head}${infer Rest}` ? 
         Head extends Colors["BLACK"] ? 
-        [Acc, ...TetrominoToCoordinates<Rest, { x: Sum<Acc["x"], 1>, y: Acc["y"] } >]
+        [Acc, ...TetrominoToCoordinates<Rest, { x: Sum<Acc["x"], 1>, y: Acc["y"], value: Colors["RED"] } >]
         : Head extends '\n' ? 
-            [...TetrominoToCoordinates<Rest, { x: 0, y: Sum<Acc["y"], 1> } >] 
+            [...TetrominoToCoordinates<Rest, { x: 0, y: Sum<Acc["y"], 1>, value: Colors["RED"] } >] 
             : Head extends Colors["WHITE"] ? 
-                [...TetrominoToCoordinates<Rest, { x: Sum<Acc["x"], 1>, y: Acc["y"] } >]
+                [...TetrominoToCoordinates<Rest, { x: Sum<Acc["x"], 1>, y: Acc["y"], value: Colors["RED"] } >]
                 : Head extends ' ' ?
-                    [...TetrominoToCoordinates<Rest, { x: Acc["x"], y: Acc["y"] } >]
+                    [...TetrominoToCoordinates<Rest, { x: Acc["x"], y: Acc["y"], value: Colors["RED"] } >]
                     : []
     : []
