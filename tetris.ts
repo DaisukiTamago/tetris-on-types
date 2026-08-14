@@ -8,7 +8,6 @@ type InitialGameState = {
     Board: MkGrid<GridSize>
 }
 
-type a = WithGravity<InitialGameState["Board"]>
 type GameState1 = GameLoop<InitialGameState>
 type GameState2 = GameLoop<GameState1>
 type GameState3 = GameLoop<GameState2>
