@@ -6,6 +6,8 @@ type Colors = {
     WHITE: "⬜"
 }
 
+type Move = "DOWN" | "LEFT" | "RIGHT"
+
 type Tetrominoes = {
     T: 
     `⬛⬛⬛
@@ -22,15 +24,15 @@ type Tetrominoes = {
     J: Tetrominoes["L"]
 }
 
-type TetrominoToCoordinates<Tetromino extends string, Acc extends Coordinate = { x: 0; y: 0, value: Colors["RED"] }> = 
+type TetrominoToCoordinates<Tetromino extends string, Acc extends Cell = { x: 0; y: Minus<TotalGridRows, 1>, value: Colors["BLUE"] }> = 
     Tetromino extends `${infer Head}${infer Rest}` ? 
         Head extends Colors["BLACK"] ? 
-        [Acc, ...TetrominoToCoordinates<Rest, { x: Sum<Acc["x"], 1>, y: Acc["y"], value: Colors["RED"] } >]
+        [Acc, ...TetrominoToCoordinates<Rest, { x: Sum<Acc["x"], 1>, y: Acc["y"], value: Acc["value"] } >]
         : Head extends '\n' ? 
-            [...TetrominoToCoordinates<Rest, { x: 0, y: Sum<Acc["y"], 1>, value: Colors["RED"] } >] 
+            [...TetrominoToCoordinates<Rest, { x: 0, y: Minus<Acc["y"], 1>, value: Acc["value"] } >] 
             : Head extends Colors["WHITE"] ? 
-                [...TetrominoToCoordinates<Rest, { x: Sum<Acc["x"], 1>, y: Acc["y"], value: Colors["RED"] } >]
+                [...TetrominoToCoordinates<Rest, { x: Sum<Acc["x"], 1>, y: Acc["y"], value: Acc["value"] } >]
                 : Head extends ' ' ?
-                    [...TetrominoToCoordinates<Rest, { x: Acc["x"], y: Acc["y"], value: Colors["RED"] } >]
+                    [...TetrominoToCoordinates<Rest, { x: Acc["x"], y: Acc["y"], value: Acc["value"] } >]
                     : []
     : []

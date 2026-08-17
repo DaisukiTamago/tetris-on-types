@@ -1,16 +1,23 @@
 type TotalGridColumns = 5
-type TotalGridRows = 5
+type TotalGridRows = 7
 
 type GridSize = Multiply<TotalGridColumns, TotalGridRows>
+type CleanBoard = MkGrid<GridSize>
 
 type InitialGameState = {
-    CurrentPiece: TetrominoToCoordinates<Tetrominoes["L"]>
-    Board: MkGrid<GridSize>
+    Board: CleanBoard
+    FallingPiece: TetrominoToCoordinates<Tetrominoes["O"]>
+    LockedTiles: []
 }
 
-type GameState1 = GameLoop<InitialGameState>
-type GameState2 = GameLoop<GameState1>
-type GameState3 = GameLoop<GameState2>
-type GameState4 = GameLoop<GameState3>
+type LastGameState = Run<InitialGameState, 19>
 
-type Display = GridToDisplay<GameState3["Board"]>
+type LastBoardState = LastGameState["Board"]
+type LastPieceState = LastGameState["FallingPiece"]
+type LastLockedTilesState = LastGameState["LockedTiles"]
+
+type lmao = IsWithinBoundaries<LastPieceState>
+type lmao2 = IsOverlapping<LastPieceState, LastLockedTilesState>
+type lmao3 = CanMove<LastPieceState, LastLockedTilesState>
+
+type Display = GridToDisplay<LastBoardState>

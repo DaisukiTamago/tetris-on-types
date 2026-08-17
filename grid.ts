@@ -1,5 +1,5 @@
 type Coordinate = { x: number; y: number }
-
+type CoordsFromCell<T extends Cell> = { x: T["x"], y: T["y"] }
 type Cell = { value: Colors[keyof Colors] } & Coordinate
 type GridRow = Cell[]
 type Grid = Cell[]
