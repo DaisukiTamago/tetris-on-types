@@ -6,7 +6,7 @@ type Colors = {
     WHITE: "⬜"
 }
 
-type Move = "DOWN" | "LEFT" | "RIGHT"
+type Move = "UP" | "LEFT" | "RIGHT" | "DOWN"
 
 type Tetrominoes = {
     T: 

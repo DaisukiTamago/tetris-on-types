@@ -4,13 +4,17 @@ type TotalGridRows = 7
 type GridSize = Multiply<TotalGridColumns, TotalGridRows>
 type CleanBoard = MkGrid<GridSize>
 
-type InitialGameState = {
-    Board: CleanBoard
-    FallingPiece: TetrominoToCoordinates<Tetrominoes["O"]>
+type InitialGameState = MkGameState<{
+    currentTick: 0
+    FallingPiece: TetrominoToCoordinates<Tetrominoes["Z"]>
+    Board: RenderCellsOnGrid<InitialGameState["FallingPiece"], CleanBoard>,
     LockedTiles: []
-}
+    Inputs: [
+        { action: "LEFT", atTick: 0 }
+    ]
+}>
 
-type LastGameState = Run<InitialGameState, 19>
+type LastGameState = Run<InitialGameState, 5>
 
 type LastBoardState = LastGameState["Board"]
 type LastPieceState = LastGameState["FallingPiece"]
