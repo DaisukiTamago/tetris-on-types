@@ -30,6 +30,10 @@ type Filter<List extends unknown[], Condition extends unknown, Result extends un
     Head extends Condition ? Filter<Rest, Condition, [Head, ...Result]> : Filter<Rest, Condition, [...Result]> 
     : Result
 
+type FilterOut<List extends unknown[], Condition extends unknown, Result extends unknown[] = []> = List extends [infer Head, ...infer Rest] ? 
+    Head extends Condition ? FilterOut<Rest, Condition, [...Result]> : FilterOut<Rest, Condition, [Head, ...Result]> 
+    : Result
+
 type GetRowAt<GridState extends Grid, Row extends number, Acc extends Grid = []> = 
         GridState extends [infer Head extends Cell, ...infer Rest extends Grid] ? 
             Head["y"] extends Row ? GetRowAt<Rest, Row, [...Acc, Head]> : GetRowAt<Rest, Row, Acc> 

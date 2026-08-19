@@ -54,6 +54,14 @@ type ApplyMoveToTile<Tile extends Cell, Direction extends Move> =
         : Direction extends "RIGHT" ? { value: Tile["value"], x: Sum<Tile["x"], 1>, y: Tile["y"] } 
             : Direction extends "DOWN" ? { value: Tile["value"], x: Tile["x"], y: Minus<Tile["y"], 1> } : never 
 
+type CheckFilledLines<OccupiedTiles extends Grid, LastCheckedRow extends number = 0, ClearedTiles extends Grid = []> =
+    GetRowAt<OccupiedTiles, LastCheckedRow> extends infer CheckedRow extends Grid ? 
+        SizeOf<CheckedRow> extends 0 ? 
+        ClearedTiles
+        : SizeOf<CheckedRow> extends TotalGridColumns ? 
+            CheckFilledLines<ApplyMove<FilterOut<OccupiedTiles, { y: LastCheckedRow }>, "DOWN">, LastCheckedRow, [...ClearedTiles]> 
+            : CheckFilledLines<OccupiedTiles, Sum<LastCheckedRow, 1>, [...ClearedTiles, ...CheckedRow]>
+    : never
 
 type GameLoop<State extends GameState> =   
     Filter<State["Inputs"], { atTick: State["currentTick"] }> extends infer DesiredMoves extends GameInput[] ?
@@ -64,11 +72,13 @@ type GameLoop<State extends GameState> =
                         FallingPiece: PulledDownPiece, 
                         Board: RenderCellsOnGrid<[...PulledDownPiece, ...State["LockedTiles"]], CleanBoard>, 
                         currentTick: Sum<State["currentTick"], 1>}> 
-                : MkGameState<State, { 
-                    LockedTiles: [...MovedPiece, ...State["LockedTiles"]]
-                    Board: RenderCellsOnGrid<[...NextTetromino<1>, ...MovedPiece, ...State["LockedTiles"]], CleanBoard>, 
-                    FallingPiece: NextTetromino<1>
-                    currentTick: Sum<State["currentTick"], 1> }>
+                    : CheckFilledLines<[...MovedPiece, ...State["LockedTiles"]]> extends infer CheckedRows extends Grid ? 
+                        MkGameState<State, { 
+                            LockedTiles: CheckedRows
+                            Board: RenderCellsOnGrid<[...NextTetromino<1>, ...CheckedRows], CleanBoard>, 
+                            FallingPiece: NextTetromino<1>
+                            currentTick: Sum<State["currentTick"], 1> }>
+                        : never
             : never  
         : never
     : never

@@ -39,4 +39,4 @@ type TetrominoToCoordinates<Tetromino extends string, Acc extends Cell = { x: 0;
                     : []
     : []
 
-type NextTetromino<Seed extends number> = TetrominoToCoordinates<Tetrominoes["T"]>
+type NextTetromino<Seed extends number> = TetrominoToCoordinates<Tetrominoes["O"]>

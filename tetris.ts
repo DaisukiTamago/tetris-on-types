@@ -1,4 +1,4 @@
-type TotalGridColumns = 5
+type TotalGridColumns = 4
 type TotalGridRows = 5
 
 type GridSize = Multiply<TotalGridColumns, TotalGridRows>
@@ -14,17 +14,19 @@ type InitialGameState = MkGameState<{
         // { action: "RIGHT", atTick: 0 },
         // { action: "LEFT", atTick: 1 },
         // { action: "LEFT", atTick: 2 },
-        { action: "RIGHT", atTick: 5 },
-        { action: "RIGHT", atTick: 5 },
+        { action: "RIGHT", atTick: 4 },
+        { action: "RIGHT", atTick: 4 },
+        { action: "RIGHT", atTick: 12 },
+        { action: "RIGHT", atTick: 12 },
     ]
     currentTick: 0
     LockedTiles: []
-    FallingPiece: TetrominoToCoordinates<Tetrominoes["S"]>
+    FallingPiece: TetrominoToCoordinates<Tetrominoes["O"]>
     Board: RenderCellsOnGrid<InitialGameState["FallingPiece"], CleanBoard>,
 }>
 
 type RawGameLoop = GameLoop<InitialGameState>
-type LastGameState = Run<InitialGameState, 1>
+type LastGameState = Run<InitialGameState, 8>
 
 type LastBoardState = LastGameState["Board"]
 type LastPieceState = LastGameState["FallingPiece"]
@@ -34,5 +36,6 @@ type lmao = IsWithinBoundaries<LastPieceState>
 type lmao2 = IsOverlapping<LastPieceState, LastLockedTilesState>
 type lmao3 = CanMove<LastPieceState, LastLockedTilesState>
 type lmao4 = ApplyMoves<LastPieceState, InitialGameState["Inputs"]> 
+type lmao5 = CheckFilledLines<LastLockedTilesState>
 
 type Display = GridToDisplay<LastBoardState>
