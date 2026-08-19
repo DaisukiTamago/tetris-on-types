@@ -6,14 +6,6 @@ type CleanBoard = MkGrid<GridSize>
 
 type InitialGameState = MkGameState<{
     Inputs: [
-        // { action: "RIGHT", atTick: 0 },
-        // { action: "RIGHT", atTick: 0 },
-        // { action: "RIGHT", atTick: 0 },
-        // { action: "RIGHT", atTick: 0 },
-        // { action: "RIGHT", atTick: 0 },
-        // { action: "RIGHT", atTick: 0 },
-        // { action: "LEFT", atTick: 1 },
-        // { action: "LEFT", atTick: 2 },
         { action: "RIGHT", atTick: 4 },
         { action: "RIGHT", atTick: 4 },
         { action: "RIGHT", atTick: 12 },
@@ -21,12 +13,12 @@ type InitialGameState = MkGameState<{
     ]
     currentTick: 0
     LockedTiles: []
-    FallingPiece: TetrominoToCoordinates<Tetrominoes["O"]>
+    FallingPiece: NextTetromino<InitialGameState["currentTick"]>
     Board: RenderCellsOnGrid<InitialGameState["FallingPiece"], CleanBoard>,
 }>
 
 type RawGameLoop = GameLoop<InitialGameState>
-type LastGameState = Run<InitialGameState, 8>
+type LastGameState = Run<InitialGameState, 4>
 
 type LastBoardState = LastGameState["Board"]
 type LastPieceState = LastGameState["FallingPiece"]

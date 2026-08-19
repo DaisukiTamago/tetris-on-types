@@ -72,12 +72,14 @@ type GameLoop<State extends GameState> =
                         FallingPiece: PulledDownPiece, 
                         Board: RenderCellsOnGrid<[...PulledDownPiece, ...State["LockedTiles"]], CleanBoard>, 
                         currentTick: Sum<State["currentTick"], 1>}> 
-                    : CheckFilledLines<[...MovedPiece, ...State["LockedTiles"]]> extends infer CheckedRows extends Grid ? 
-                        MkGameState<State, { 
-                            LockedTiles: CheckedRows
-                            Board: RenderCellsOnGrid<[...NextTetromino<1>, ...CheckedRows], CleanBoard>, 
-                            FallingPiece: NextTetromino<1>
-                            currentTick: Sum<State["currentTick"], 1> }>
+                    : CheckFilledLines<[...MovedPiece, ...State["LockedTiles"]]> extends infer CheckedRows extends Grid ?
+                        NextTetromino<State["currentTick"]> extends infer NextPiece extends Cell[] ?
+                            MkGameState<State, { 
+                                LockedTiles: CheckedRows
+                                Board: RenderCellsOnGrid<[...NextPiece, ...CheckedRows], CleanBoard>, 
+                                FallingPiece: NextPiece
+                                currentTick: Sum<State["currentTick"], 1> }>
+                            : never
                         : never
             : never  
         : never
