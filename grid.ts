@@ -26,6 +26,10 @@ type Includes<List extends unknown[], Target extends unknown> = List extends [in
     Head extends Target ? Head : Includes<Rest, Target> 
     : 'Item not included'
 
+type Filter<List extends unknown[], Condition extends unknown, Result extends unknown[] = []> = List extends [infer Head, ...infer Rest] ? 
+    Head extends Condition ? Filter<Rest, Condition, [Head, ...Result]> : Filter<Rest, Condition, [...Result]> 
+    : Result
+
 type GetRowAt<GridState extends Grid, Row extends number, Acc extends Grid = []> = 
         GridState extends [infer Head extends Cell, ...infer Rest extends Grid] ? 
             Head["y"] extends Row ? GetRowAt<Rest, Row, [...Acc, Head]> : GetRowAt<Rest, Row, Acc> 
