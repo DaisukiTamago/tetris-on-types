@@ -34,6 +34,28 @@ type FilterOut<List extends unknown[], Condition extends unknown, Result extends
     Head extends Condition ? FilterOut<Rest, Condition, [...Result]> : FilterOut<Rest, Condition, [Head, ...Result]> 
     : Result
 
+type GetMinAndMaxCoordinates<Tiles extends Cell[], Result extends { min: Coordinate, max: Coordinate } = { min: Tiles[0], max: Tiles[0] }> = 
+    Tiles extends [infer Head extends Cell, ...infer Rest extends Cell[]] ?
+        IsGreaterThanOrEqual<Head["x"], Result["max"]["x"]> extends infer IsNewMaxX extends boolean ?
+            IsGreaterThanOrEqual<Head["y"], Result["max"]["y"]> extends infer IsNewMaxY extends boolean ?
+                IsGreaterThanOrEqual<Result["min"]["x"], Head["x"]> extends infer IsNewMinX extends boolean ?
+                    IsGreaterThanOrEqual<Result["min"]["y"], Head["y"]> extends infer IsNewMinY extends boolean ?
+                        GetMinAndMaxCoordinates<Rest, {
+                            min: { 
+                                x: IsNewMinX extends true ? Head["x"] : Result["min"]["x"], 
+                                y: IsNewMinY extends true ? Head["y"] : Result["min"]["y"], 
+                            }
+                            max: { 
+                                x: IsNewMaxX extends true ? Head["x"] : Result["max"]["x"], 
+                                y: IsNewMaxY extends true ? Head["y"] : Result["max"]["y"], 
+                            }
+                        }>
+                    : never
+                : never
+            : never 
+        : never
+    : Result
+ 
 type GetRowAt<GridState extends Grid, Row extends number, Acc extends Grid = []> = 
         GridState extends [infer Head extends Cell, ...infer Rest extends Grid] ? 
             Head["y"] extends Row ? GetRowAt<Rest, Row, [...Acc, Head]> : GetRowAt<Rest, Row, Acc> 

@@ -16,8 +16,8 @@ type GameState = {
 
 type IsWithinBoundaries<Pieces extends Cell[], Result extends boolean = false> = 
     Pieces extends [infer Piece extends Cell, ...infer Rest extends Cell[]] ?
-        Piece["y"] extends never ?
-        false
+        Piece["y"] extends never ? false 
+      : Piece["x"] extends never ? false
         : { y: IsGreaterThanOrEqual<Piece["y"], 0>, x: isWithinInclusiveRange<Piece["x"], { min: 0, max: Minus<TotalGridColumns, 1> }> } extends { x: true, y: true } ? 
             IsWithinBoundaries<Rest, true> 
             : false
@@ -44,7 +44,7 @@ type ApplyMoves<Piece extends Cell[], Moves extends GameInput[], Occupied extend
             : never
     : never
 
-type ApplyMove<Pieces extends Cell[], Direction extends Move, UpdatedCells extends Cell[] = []> = 
+type ApplyMove<Pieces extends Cell[], Direction extends Move, UpdatedCells extends Cell[] = []> = Direction extends "UP" ? Rotate<Pieces> :
     Pieces extends [infer Head extends Cell, ...infer Rest extends Grid] ?
         ApplyMove<Rest, Direction, [ApplyMoveToTile<Head, Direction>, ...UpdatedCells]>
         : UpdatedCells
@@ -53,6 +53,24 @@ type ApplyMoveToTile<Tile extends Cell, Direction extends Move> =
     Direction extends "LEFT" ? { value: Tile["value"], x: Minus<Tile["x"], 1>, y: Tile["y"] } 
         : Direction extends "RIGHT" ? { value: Tile["value"], x: Sum<Tile["x"], 1>, y: Tile["y"] } 
             : Direction extends "DOWN" ? { value: Tile["value"], x: Tile["x"], y: Minus<Tile["y"], 1> } : never 
+
+type Rotate<
+    OriginalTiles extends Cell[],
+    Box extends { min: Coordinate, max: Coordinate } = GetMinAndMaxCoordinates<OriginalTiles>,
+    RotatedTiles extends Cell[] = []
+> =
+    OriginalTiles extends [infer Tile extends Cell, ...infer Rest extends Cell[]] ?
+        Minus<Tile["x"], Box["min"]["x"]> extends infer LocalX extends number ?
+            Minus<Tile["y"], Box["min"]["y"]> extends infer LocalY extends number ?
+                Minus<Minus<Box["max"]["y"], Box["min"]["y"]>, LocalY> extends infer NewX extends number ?
+                    Rotate<Rest, Box, [
+                        { value: Tile["value"], x: Sum<NewX, Box["min"]["x"]>, y: Sum<LocalX, Box["min"]["y"]> },
+                        ...RotatedTiles
+                    ]>
+                : never
+            : never
+        : never
+    : RotatedTiles
 
 type CheckFilledLines<OccupiedTiles extends Grid, LastCheckedRow extends number = 0, ClearedTiles extends Grid = []> =
     GetRowAt<OccupiedTiles, LastCheckedRow> extends infer CheckedRow extends Grid ? 
