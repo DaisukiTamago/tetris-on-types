@@ -1,15 +1,10 @@
 type MkGameState<State extends GameState, Overrides extends { [K in keyof GameState]?: GameState[K] } = {}> =
     { [K in keyof State | keyof Overrides]: K extends keyof Overrides ? Overrides[K] : K extends keyof State ? State[K] : never }
 
-type GameInput = {
-    action: Move
-    atTick: number
-}
-
 type GameState = {
     currentTick: number
     Board: Grid
-    Inputs: GameInput[]
+    Inputs: readonly Move[][]
     FallingPiece: Cell[]
     LockedTiles: Cell[]
 }
@@ -34,10 +29,10 @@ type CanMove<Pieces extends Grid, Occupied extends Grid> = IsWithinBoundaries<Pi
     IsOverlapping<Pieces, Occupied> extends false ? true : false 
     : false
 
-type ApplyMoves<Piece extends Cell[], Moves extends GameInput[], Occupied extends Cell[] = []> = 
+type ApplyMoves<Piece extends Cell[], Moves extends Move[], Occupied extends Cell[] = []> = 
     Moves["length"] extends 0 ? Piece :
-    Moves extends [infer Head extends GameInput, ...infer Rest extends GameInput[]] ? 
-        ApplyMove<Piece, Head["action"]> extends infer UpdatedPiece extends Cell[] ? 
+    Moves extends [infer Head extends Move, ...infer Rest extends Move[]] ? 
+        ApplyMove<Piece, Head> extends infer UpdatedPiece extends Cell[] ? 
             CanMove<UpdatedPiece, Occupied> extends true ? 
                 ApplyMoves<UpdatedPiece, Rest, Occupied> 
                 : ApplyMoves<Piece, Rest, Occupied> 
@@ -81,8 +76,10 @@ type CheckFilledLines<OccupiedTiles extends Grid, LastCheckedRow extends number 
             : CheckFilledLines<OccupiedTiles, Sum<LastCheckedRow, 1>, [...ClearedTiles, ...CheckedRow]>
     : never
 
+type MovesAt<State extends GameState> = State["Inputs"][State["currentTick"]] extends infer Moves extends Move[] ? Moves : []
+
 type GameLoop<State extends GameState> =   
-    Filter<State["Inputs"], { atTick: State["currentTick"] }> extends infer DesiredMoves extends GameInput[] ?
+    MovesAt<State> extends infer DesiredMoves extends Move[] ?
         ApplyMoves<State["FallingPiece"], DesiredMoves, State["LockedTiles"]> extends infer MovedPiece extends Cell[] ?
             ApplyMove<MovedPiece, "DOWN"> extends infer PulledDownPiece extends Cell[] ? 
                 CanMove<PulledDownPiece, State["LockedTiles"]> extends true ? 

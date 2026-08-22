@@ -1,4 +1,5 @@
 type Move = "UP" | "LEFT" | "RIGHT" | "DOWN"
+type MkMove<T extends Move[][]> = T
 
 // it seems like there is an official color pallete for these, so let's please them nerds 
 // https://tetris.fandom.com/wiki/Tetromino
