@@ -1,5 +1,5 @@
 type TotalGridColumns = 4
-type TotalGridRows = 5
+type TotalGridRows = 7
 
 type GridSize = Multiply<TotalGridColumns, TotalGridRows>
 type CleanBoard = MkGrid<GridSize>
@@ -13,7 +13,7 @@ type InitialGameState = MkGameState<{
 }>
 
 type RawGameLoop = GameLoop<InitialGameState>
-type LastGameState = Run<InitialGameState, 1>
+type LastGameState = Run<InitialGameState, Inputs["length"]>
 type LastBoardState = LastGameState["Board"]
 type LastPieceState = LastGameState["FallingPiece"]
 type LastLockedTilesState = LastGameState["LockedTiles"]
@@ -27,7 +27,8 @@ type lmao6 = GetMinAndMaxCoordinates<LastPieceState>
 type lmao8 = Rotate<LastPieceState>
 
 type Inputs = MkMove<[
-    ["UP", "UP"]
+    ["UP", "UP"], [], ["RIGHT"], [], [],
+    [], [], [], [], 
 ]>
 
 type Display = GridToDisplay<LastBoardState>

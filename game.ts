@@ -67,13 +67,15 @@ type Rotate<
         : never
     : RotatedTiles
 
-type CheckFilledLines<OccupiedTiles extends Grid, LastCheckedRow extends number = 0, ClearedTiles extends Grid = []> =
+type CheckFilledLines<OccupiedTiles extends Cell[], LastCheckedRow extends number = 0, ClearedTiles extends Cell[] = []> =
     GetRowAt<OccupiedTiles, LastCheckedRow> extends infer CheckedRow extends Grid ? 
         SizeOf<CheckedRow> extends 0 ? 
-        ClearedTiles
-        : SizeOf<CheckedRow> extends TotalGridColumns ? 
-            CheckFilledLines<ApplyMove<FilterOut<OccupiedTiles, { y: LastCheckedRow }>, "DOWN">, LastCheckedRow, [...ClearedTiles]> 
-            : CheckFilledLines<OccupiedTiles, Sum<LastCheckedRow, 1>, [...ClearedTiles, ...CheckedRow]>
+            ClearedTiles : 
+            FilterOut<OccupiedTiles, { y: LastCheckedRow }> extends infer RemainingTiles extends Cell[] ?
+                SizeOf<CheckedRow> extends TotalGridColumns ?
+                    CheckFilledLines<ApplyMove<RemainingTiles, "DOWN">, LastCheckedRow, [...ClearedTiles]> 
+                        : CheckFilledLines<RemainingTiles, Sum<LastCheckedRow, 1>, [...ClearedTiles, ...CheckedRow]>
+                : never
     : never
 
 type MovesAt<State extends GameState> = State["Inputs"][State["currentTick"]] extends infer Moves extends Move[] ? Moves : []
