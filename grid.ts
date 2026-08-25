@@ -34,6 +34,19 @@ type FilterOut<List extends unknown[], Condition extends unknown, Result extends
     Head extends Condition ? FilterOut<Rest, Condition, [...Result]> : FilterOut<Rest, Condition, [Head, ...Result]> 
     : Result
 
+type Reverse<List extends unknown, Result extends unknown[] = []> = 
+    List extends string ?
+        List extends `${infer Head}${infer Rest}` ? 
+            Reverse<Rest, [Head, ...Result]> : Join<Result>
+        : List extends [infer Head, ...infer Rest] ? 
+            Reverse<Rest, [Head, ...Result]> : Result
+
+type Join<List extends unknown[], Result extends string = ""> = 
+    List extends [infer Head extends string, ...infer Rest] ? Join<Rest, `${Result}${Head}`> : Result
+
+type Mirror<S extends string> = S extends `${infer A extends string}\n${infer B extends string}`
+    ? Reverse<`${B}\n${A}`> : S
+
 type GetMinAndMaxCoordinates<Tiles extends Cell[], Result extends { min: Coordinate, max: Coordinate } = { min: Tiles[0], max: Tiles[0] }> = 
     Tiles extends [infer Head extends Cell, ...infer Rest extends Cell[]] ?
         IsGreaterThanOrEqual<Head["x"], Result["max"]["x"]> extends infer IsNewMaxX extends boolean ?

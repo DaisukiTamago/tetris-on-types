@@ -32,8 +32,8 @@ type TetrominoList = MkTetrominoList<[
     `⬛⬛⬛
      ⬛⬜⬜` },
     { name: "I", color: Colors["CYAN"], shape: `⬛⬛⬛⬛` },
-    { name: "Z", color: Colors["RED"], shape: TetrominoList[1]["shape"] }, 
-    { name: "J", color: Colors["BLUE"], shape: TetrominoList[3]["shape"] }
+    { name: "Z", color: Colors["RED"], shape: Mirror<TetrominoList[1]["shape"]> }, 
+    { name: "J", color: Colors["BLUE"], shape: Mirror<TetrominoList[3]["shape"]> }
 ]>
 type NumberOfTetrominoes = SizeOf<TetrominoList>
 

@@ -3,6 +3,7 @@ type TotalGridRows = 7
 
 type GridSize = Multiply<TotalGridColumns, TotalGridRows>
 type CleanBoard = MkGrid<GridSize>
+type GameOverBoard = MkGrid<GridSize, { value: Colors["RED"], x: 0, y: 0, index: 0 } >
 
 type InitialGameState = MkGameState<{
     Inputs: Inputs
@@ -27,8 +28,7 @@ type lmao6 = GetMinAndMaxCoordinates<LastPieceState>
 type lmao8 = Rotate<LastPieceState>
 
 type Inputs = MkMove<[
-    ["UP", "UP"], [], ["RIGHT"], [], [],
-    [], [], [], [], 
+    ["RIGHT","UP", "UP", "UP"], 
 ]>
 
 type Display = GridToDisplay<LastBoardState>
