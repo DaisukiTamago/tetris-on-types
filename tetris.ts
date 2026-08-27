@@ -1,5 +1,5 @@
 type TotalGridColumns = 4
-type TotalGridRows = 7
+type TotalGridRows = 4
 
 type GridSize = Multiply<TotalGridColumns, TotalGridRows>
 type CleanBoard = MkGrid<GridSize>
@@ -12,6 +12,7 @@ type InitialGameState = MkGameState<{
     currentTick: 0
     Board: RenderCellsOnGrid<InitialGameState["FallingPiece"], CleanBoard>,
     IsGameOver: false
+    Score: 0
 }>
 
 type RawGameLoop = GameLoop<InitialGameState>

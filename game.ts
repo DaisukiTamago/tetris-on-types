@@ -8,6 +8,7 @@ type GameState = {
     FallingPiece: Cell[]
     LockedTiles: Cell[]
     IsGameOver: boolean
+    Score: number
 }
 
 type IsWithinBoundaries<Pieces extends Cell[], Result extends boolean = false> = 
@@ -68,14 +69,14 @@ type Rotate<
         : never
     : RotatedTiles
 
-type CheckFilledLines<OccupiedTiles extends Cell[], LastCheckedRow extends number = 0, ClearedTiles extends Cell[] = []> =
+type CheckFilledLines<OccupiedTiles extends Cell[], LastCheckedRow extends number = 0, Result extends { clearedTiles: Cell[], score: number } = { clearedTiles: [], score: 0 }> =
     GetRowAt<OccupiedTiles, LastCheckedRow> extends infer CheckedRow extends Grid ? 
         SizeOf<CheckedRow> extends 0 ? 
-            ClearedTiles : 
+            Result : 
             FilterOut<OccupiedTiles, { y: LastCheckedRow }> extends infer RemainingTiles extends Cell[] ?
                 SizeOf<CheckedRow> extends TotalGridColumns ?
-                    CheckFilledLines<ApplyMove<RemainingTiles, "DOWN">, LastCheckedRow, [...ClearedTiles]> 
-                        : CheckFilledLines<RemainingTiles, Sum<LastCheckedRow, 1>, [...ClearedTiles, ...CheckedRow]>
+                    CheckFilledLines<ApplyMove<RemainingTiles, "DOWN">, LastCheckedRow, { clearedTiles: [...Result["clearedTiles"]], score: Sum<Result["score"], 1> }> 
+                        : CheckFilledLines<RemainingTiles, Sum<LastCheckedRow, 1>, { clearedTiles: [...Result["clearedTiles"], ...CheckedRow], score: Result["score"] }>
                 : never
     : never
 
@@ -92,14 +93,15 @@ type GameLoop<State extends GameState> =
                                 FallingPiece: PulledDownPiece, 
                                 Board: RenderCellsOnGrid<[...PulledDownPiece, ...State["LockedTiles"]], CleanBoard>, 
                                 currentTick: Sum<State["currentTick"], 1>}> 
-                            : CheckFilledLines<[...MovedPiece, ...State["LockedTiles"]]> extends infer CheckedRows extends Grid ?
+                            : CheckFilledLines<[...MovedPiece, ...State["LockedTiles"]]> extends infer CheckedRows extends { clearedTiles: Cell[], score: number } ?
                                 NextTetromino<State["currentTick"]> extends infer NextPiece extends Cell[] ?
-                                    IsOverlapping<NextPiece, CheckedRows> extends true ?
+                                    IsOverlapping<NextPiece, CheckedRows["clearedTiles"]> extends true ?
                                         MkGameState<State, { Board: GameOverBoard, FallingPiece: [], LockedTiles: [], IsGameOver: true }>
                                         : MkGameState<State, { 
-                                            LockedTiles: CheckedRows
-                                            Board: RenderCellsOnGrid<[...NextPiece, ...CheckedRows], CleanBoard>, 
+                                            LockedTiles: CheckedRows["clearedTiles"]
+                                            Board: RenderCellsOnGrid<[...NextPiece, ...CheckedRows["clearedTiles"]], CleanBoard>, 
                                             FallingPiece: NextPiece
+                                            Score: Sum<State["Score"], CheckedRows["score"]>
                                             currentTick: Sum<State["currentTick"], 1> }>
                                     : never
                                 : never
