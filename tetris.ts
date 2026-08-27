@@ -11,6 +11,7 @@ type InitialGameState = MkGameState<{
     FallingPiece: NextTetromino<InitialGameState["currentTick"]>
     currentTick: 0
     Board: RenderCellsOnGrid<InitialGameState["FallingPiece"], CleanBoard>,
+    IsGameOver: false
 }>
 
 type RawGameLoop = GameLoop<InitialGameState>
@@ -28,7 +29,7 @@ type lmao6 = GetMinAndMaxCoordinates<LastPieceState>
 type lmao8 = Rotate<LastPieceState>
 
 type Inputs = MkMove<[
-    ["RIGHT","UP", "UP", "UP"], 
+    ["RIGHT","UP", "UP", "UP"]
 ]>
 
 type Display = GridToDisplay<LastBoardState>
