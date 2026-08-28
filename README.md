@@ -25,12 +25,11 @@ No JavaScript is emitted. Type-checking is the execution step.
 
 The game is represented as type-level data:
 
-- `src/parameters.ts`: board dimensions for the current simulation
 - `src/math.ts`: arithmetic using tuple types
 - `src/constants.ts`: pieces, colors, and piece generation
 - `src/helpers.ts`: list operations and mirroring
 - `src/grid.ts`: cells, grids, coordinates, and rendering
-- `src/game.ts`: movement, collision, gravity, line clearing, and scoring
+- `src/game.ts`: configuration, state, movement, collision, gravity, line clearing, and scoring
 - `src/display.ts`: converts the board into display rows
 - `src/tetris.ts`: example game configuration and initial state
 
@@ -65,7 +64,7 @@ is useful.
 
 `DOWN` attempts a one-cell move, and invalid moves are ignored. Gravity is
 applied every fourth tick. Board dimensions are grouped in the global
-`Config` object in `src/parameters.ts`. Larger boards or longer
+`Config` object in `src/game.ts`. Larger boards or longer
 timelines can be expensive for the compiler, and the project currently targets
 TypeScript 6.
 
@@ -96,7 +95,3 @@ For reference:
 - [Super Rotation System](https://tetris.wiki/Super_Rotation_System)
 - [Random Generator / 7-bag](https://tetris.wiki/Random_Generator)
 - [Tetris scoring systems](https://tetris.wiki/Scoring)
-
-## License
-
-This project is licensed under the MIT License. See [LICENSE](./LICENSE).
