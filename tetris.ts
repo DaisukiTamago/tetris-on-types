@@ -1,9 +1,10 @@
-type TotalGridColumns = 4
+type TotalGridColumns = 5
 type TotalGridRows = 4
 
 type GridSize = Multiply<TotalGridColumns, TotalGridRows>
+
 type CleanBoard = MkGrid<GridSize>
-type GameOverBoard = MkGrid<GridSize, { value: Colors["RED"], x: 0, y: 0, index: 0 } >
+type GameOverBoard = MkGrid<GridSize, { value: Colors["RED"], x: 0, y: 0, index: 0 }>
 
 type InitialGameState = MkGameState<{
     Inputs: Inputs
@@ -15,22 +16,10 @@ type InitialGameState = MkGameState<{
     Score: 0
 }>
 
-type RawGameLoop = GameLoop<InitialGameState>
-type LastGameState = Run<InitialGameState, Inputs["length"]>
-type LastBoardState = LastGameState["Board"]
-type LastPieceState = LastGameState["FallingPiece"]
-type LastLockedTilesState = LastGameState["LockedTiles"]
-
-type lmao = IsWithinBoundaries<LastPieceState>
-type lmao2 = IsOverlapping<LastPieceState, LastLockedTilesState>
-type lmao3 = CanMove<LastPieceState, LastLockedTilesState>
-type lmao4 = ApplyMoves<LastPieceState, MovesAt<LastGameState>> 
-type lmao5 = CheckFilledLines<LastLockedTilesState>
-type lmao6 = GetMinAndMaxCoordinates<LastPieceState>
-type lmao8 = Rotate<LastPieceState>
+type UpdatedGameState = Run<InitialGameState, SizeOf<Inputs>>
 
 type Inputs = MkMove<[
-    ["RIGHT","UP", "UP", "UP"]
+    []
 ]>
 
-type Display = GridToDisplay<LastBoardState>
+type Display = GridToDisplay<UpdatedGameState["Board"]>
