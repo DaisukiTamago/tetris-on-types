@@ -1,5 +1,7 @@
 # Type-Level Tetris
 
+<img width="427" height="220" alt="image" src="https://github.com/user-attachments/assets/c5494d7d-8ce4-438f-a899-a6a7fd525052" />
+
 Tetris implemented entirely with TypeScript's type system.
 
 This project demonstrates that TypeScript's type system is
@@ -74,7 +76,7 @@ This is not intended to reproduce one particular commercial Tetris release.
 It borrows the basic falling-block rules while deliberately taking shortcuts
 that keep the type-level implementation understandable and compilable.
 
-| Feature | This project | Early Electronika 60 Tetris | Modern Guideline Tetris |
+| Feature | Tetris on Types | Early Electronika 60 Tetris | Modern Guideline Tetris |
 | --- | --- | --- | --- |
 | Playfield | Small example board in `src/tetris.ts`; host dimensions are configurable | 10 x 20 | 10 x 20 plus a hidden buffer zone |
 | Piece set | Seven tetromino shapes | Seven tetromino shapes | Seven tetromino shapes |
