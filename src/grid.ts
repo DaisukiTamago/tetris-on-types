@@ -11,8 +11,8 @@ type MkGrid<GridSize extends number, Acc extends Cell & { index: number } = { va
     Result["length"] extends GridSize ?
         Result
     : Sum<Acc["index"], 1> extends (infer NextIndex extends number) ?
-        Div<NextIndex, TotalGridColumns> extends (infer Row extends number) ?
-            Mod<NextIndex, TotalGridColumns> extends (infer Column extends number) ?
+        Div<NextIndex, Config["columns"]> extends (infer Row extends number) ?
+            Mod<NextIndex, Config["columns"]> extends (infer Column extends number) ?
                 MkGrid<GridSize, { value: Acc["value"], x: Column, y: Row, index: NextIndex }, [Acc, ...Result]>
             : never
         : never

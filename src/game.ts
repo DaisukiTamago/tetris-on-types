@@ -1,13 +1,3 @@
-type MkGameState<State extends GameState, Overrides extends { [K in keyof GameState]?: GameState[K] } = {}> =
-    {
-        [K in keyof State | keyof Overrides]:
-            K extends keyof Overrides ?
-                Overrides[K]
-            : K extends keyof State ?
-                State[K]
-            : never
-    }
-
 type GameState = {
     currentTick: number
     Board: Grid
@@ -18,13 +8,42 @@ type GameState = {
     Score: number
 }
 
+type Config = {
+    columns: 5
+    rows: 4
+}
+
+type GridSize = Multiply<Config["columns"], Config["rows"]>
+type CleanBoard = MkGrid<GridSize>
+type GameOverBoard = MkGrid<GridSize, { value: Colors["RED"], x: 0, y: 0, index: 0 }>
+
+type MkGameState<State extends GameState, Overrides extends { [K in keyof GameState]?: GameState[K] } = {}> =
+    {
+        [K in keyof State | keyof Overrides]:
+            K extends keyof Overrides ?
+                Overrides[K]
+            : K extends keyof State ?
+                State[K]
+            : never
+    }
+
+type DefaultInitialGameState<Inputs extends Move[][]> = MkGameState<{
+    Inputs: Inputs
+    LockedTiles: []
+    FallingPiece: NextTetromino<0>
+    currentTick: 0
+    Board: RenderCellsOnGrid<NextTetromino<0>, CleanBoard>
+    IsGameOver: false
+    Score: 0
+}>
+
 type IsWithinBoundaries<Pieces extends Cell[], Result extends boolean = false> =
     Pieces extends [infer Piece extends Cell, ...infer Rest extends Cell[]] ?
         Piece["y"] extends never ?
             false
         : Piece["x"] extends never ?
             false
-        : { y: IsGreaterThanOrEqual<Piece["y"], 0>, x: isWithinInclusiveRange<Piece["x"], { min: 0, max: Minus<TotalGridColumns, 1> }> } extends { x: true, y: true } ?
+        : { y: IsGreaterThanOrEqual<Piece["y"], 0>, x: isWithinInclusiveRange<Piece["x"], { min: 0, max: Minus<Config["columns"], 1> }> } extends { x: true, y: true } ?
             IsWithinBoundaries<Rest, true>
         : false
     : Result
@@ -91,7 +110,7 @@ type CheckFilledLines<OccupiedTiles extends Cell[], LastCheckedRow extends numbe
         SizeOf<CheckedRow> extends 0 ?
             Result
         : FilterOut<OccupiedTiles, { y: LastCheckedRow }> extends infer RemainingTiles extends Cell[] ?
-            SizeOf<CheckedRow> extends TotalGridColumns ?
+            SizeOf<CheckedRow> extends Config["columns"] ?
                 CheckFilledLines<ApplyMove<RemainingTiles, "DOWN">, LastCheckedRow, { clearedTiles: [...Result["clearedTiles"]], score: Sum<Result["score"], 1> }>
             : CheckFilledLines<RemainingTiles, Sum<LastCheckedRow, 1>, { clearedTiles: [...Result["clearedTiles"], ...CheckedRow], score: Result["score"] }>
         : never
@@ -147,3 +166,8 @@ type Run<InitialState extends GameState, MaxTick extends number> =
             LoopResult
         : never
     : never
+
+type DisplayOf<State extends GameState> = GridToDisplay<State["Board"]>
+
+type Tetris<Inputs extends Move[][]> =
+    Run<DefaultInitialGameState<Inputs>, SizeOf<Inputs>>

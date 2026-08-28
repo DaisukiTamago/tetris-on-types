@@ -37,7 +37,7 @@ type TetrominoList = MkTetrominoList<[
 ]>
 type NumberOfTetrominoes = SizeOf<TetrominoList>
 
-type TetrominoToCoordinates<Tetromino extends TetrominoType, Acc extends Cell = { x: 0; y: Minus<TotalGridRows, 1>, value: Tetromino["color"] }> =
+type TetrominoToCoordinates<Tetromino extends TetrominoType, Acc extends Cell = { x: 0; y: Minus<Config["rows"], 1>, value: Tetromino["color"] }> =
     Tetromino["shape"] extends `${infer Head}${infer Rest}` ?
         Head extends Colors["BLACK"] ?
             [Acc, ...TetrominoToCoordinates<{ shape: Rest, color: Tetromino["color"], name: Tetromino["name"] }, { x: Sum<Acc["x"], 1>, y: Acc["y"], value: Acc["value"] } >]

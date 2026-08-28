@@ -25,6 +25,7 @@ No JavaScript is emitted. Type-checking is the execution step.
 
 The game is represented as type-level data:
 
+- `src/parameters.ts`: board dimensions for the current simulation
 - `src/math.ts`: arithmetic using tuple types
 - `src/constants.ts`: pieces, colors, and piece generation
 - `src/helpers.ts`: list operations and mirroring
@@ -36,19 +37,14 @@ The game is represented as type-level data:
 The source files are global type-level fragments and are evaluated together as
 one TypeScript program.
 
-## How to Use
+## How to Play
 
-The API is a collection of type aliases. A play is represented by an input
-timeline, where each nested array contains the moves attempted during one
-tick. `Run` evaluates the game for the requested number of ticks:
+The API is a collection of type aliases. To simulate a game, define an input
+timeline where each nested array contains the moves attempted during one tick.
+`Tetris` creates the default initial state and evaluates it for the length of
+the timeline:
 
 ```ts
-type TotalGridColumns = 5
-type TotalGridRows = 4
-
-type GridSize = Multiply<TotalGridColumns, TotalGridRows>
-type CleanBoard = MkGrid<GridSize>
-
 type Inputs = MkMove<[
     ["RIGHT"],
     ["RIGHT"],
@@ -57,28 +53,21 @@ type Inputs = MkMove<[
     [],
 ]>
 
-type InitialGameState = MkGameState<{
-    Inputs: Inputs
-    LockedTiles: []
-    FallingPiece: NextTetromino<InitialGameState["currentTick"]>
-    currentTick: 0
-    Board: RenderCellsOnGrid<InitialGameState["FallingPiece"], CleanBoard>
-    IsGameOver: false
-    Score: 0
-}>
-
-type FinalGameState = Run<InitialGameState, SizeOf<Inputs>>
-type FinalBoard = GridToDisplay<FinalGameState["Board"]>
-type FinalScore = FinalGameState["Score"]
+type Game = Tetris<Inputs>
+type Display = DisplayOf<Game>
+type Score = Game["Score"]
 ```
 
-Open `FinalBoard`, `FinalScore`, or any other property in an editor with
-TypeScript support to inspect the computed result. There is no runtime API and
-no JavaScript output; the TypeScript compiler performs the simulation.
+Open `Display`, `Score`, or any other property in an editor with TypeScript
+support to inspect the computed result. The lower-level `Run` and
+`DefaultInitialGameState` aliases remain available when a custom initial state
+is useful.
 
 `DOWN` attempts a one-cell move, and invalid moves are ignored. Gravity is
-applied every fourth tick. Larger boards or longer timelines can be expensive
-for the compiler, and the project currently targets TypeScript 6.
+applied every fourth tick. Board dimensions are grouped in the global
+`Config` object in `src/parameters.ts`. Larger boards or longer
+timelines can be expensive for the compiler, and the project currently targets
+TypeScript 6.
 
 ## Implementation Quirks
 
