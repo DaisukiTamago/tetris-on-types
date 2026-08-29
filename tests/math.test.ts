@@ -1,10 +1,3 @@
-type Expect<T extends true> = T
-
-type ToBeEqual<A, B> =
-    [A] extends [B]
-        ? [B] extends [A] ? true : false
-        : false
-
 type TupleCreationTests = [
     Expect<ToBeEqual<SizeOf<TupleOf<10>>, 10>>,
 
